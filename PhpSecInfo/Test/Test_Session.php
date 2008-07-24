@@ -10,7 +10,7 @@
 /**
  * require the main PhpSecInfo class
  */
-require_once('PhpSecInfo/Test/Test.php');
+require_once(PHPSECINFO_BASE_DIR.'/Test/Test.php');
 
 
 

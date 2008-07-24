@@ -9,7 +9,7 @@
 /**
  * require the PhpSecInfo_Test_Cgi class
  */
-require_once('PhpSecInfo/Test/Test_Cgi.php');
+require_once(PHPSECINFO_BASE_DIR.'/Test/Test_Cgi.php');
 
 /**
  * Test class for cgi force_redirect

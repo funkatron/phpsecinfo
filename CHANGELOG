@@ -1,8 +1,12 @@
 v0.2.2
+- requires are now resolved relative to base phpsecinfo path, so PhpSecInfo does
+  not need to be in php's include path
+- allow_url_fopen now will not throw a warning if enabled and PHP version >= 5.2
 - Added simple View system; moved HTML views out of PhpSecInfo class.  You can
   use PhpSecInfo->setViewDirectory($path) to set the path to your own custom
   views (your view files need to mirror the structure of the default views).
-- Added stubs for cli, CSV and RSS views
+- Added cli, CSV, JSON and RSS views
+- Added examples directory to demonstrate more advanced usage of views system
 - PHPSecInfo_Test::getUnixId() now handles failure better and tries alternate
   methods before giving up
 - Minor CSS fixes in HTML view <Thomas Corbiere>

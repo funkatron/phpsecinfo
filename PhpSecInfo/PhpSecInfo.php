@@ -23,7 +23,7 @@ define ('PHPSECINFO_VERSION', '0.2.2');
  * a YYYYMMDD date string to indicate "build" date
  *
  */
-define ('PHPSECINFO_BUILD', '20070408');
+define ('PHPSECINFO_BUILD', '20080723');
 
 /**
  * Homepage for phpsecinfo project
@@ -45,13 +45,18 @@ define('PHPSECINFO_FORMAT_DEFAULT', 'Html');
 
 
 /**
+ * The base directory, used to resolve requires and includes
+ */
+define('PHPSECINFO_BASE_DIR', dirname(__FILE__));
+
+/**
  * This is the main class for the phpsecinfo system.  It's responsible for
  * dynamically loading tests, running those tests, and generating the results
  * output
  *
  * Example:
  * <code>
- * <?php require_once('PhpSecInfo/PhpSecInfo.php'); ?>
+ * <?php require_once(PHPSECINFO_BASE_DIR.'/PhpSecInfo.php'); ?>
  * <?php phpsecinfo(); ?>
  * </code>
  *
@@ -60,7 +65,7 @@ define('PHPSECINFO_FORMAT_DEFAULT', 'Html');
  *
  * Example:
  * <code>
- * require_once('PhpSecInfo/PhpSecInfo.php');
+ * require_once(PHPSECINFO_BASE_DIR.'/PhpSecInfo.php');
  * // instantiate the class
  * $psi = new PhpSecInfo();
  *
@@ -150,6 +155,12 @@ class PhpSecInfo
 	var $num_tests_run = 0;
 
 
+	/**
+	 * The base directory for phpsecinfo. Set within the constructor. Paths are resolved from this.
+	 * @var string
+	 */
+	var $_base_dir;
+
 
 	/**
 	 * The directory PHPSecInfo will look for views.  It defaults to the value
@@ -173,15 +184,34 @@ class PhpSecInfo
 	 *
 	 * @return PhpSecInfo
 	 */
-	function PhpSecInfo() {
-		/**
-		 * set the default View directory
-		 */
-		$this->setViewDirectory(dirname(__FILE__).DIRECTORY_SEPARATOR . PHPSECINFO_VIEW_DIR_DEFAULT);
-		if (strtolower(php_sapi_name()) == 'cli' ) {
-			$this->setFormat('Cli');
-		} else {
-			$this->setFormat(PHPSECINFO_FORMAT_DEFAULT);
+	function PhpSecInfo($opts = null) {
+		
+		$this->_base_dir = dirname(__FILE__);
+		
+		if ($opts) {
+			if (isset($opts['view_directory'])) {
+				$this->setViewDirectory($opts['view_directory']);
+			} else {
+				$this->setViewDirectory(dirname(__FILE__).DIRECTORY_SEPARATOR . PHPSECINFO_VIEW_DIR_DEFAULT);
+			}
+			
+			if (isset($opts['format'])) {
+				$this->setFormat($opts['format']);
+			} else {
+				if (strtolower(php_sapi_name()) == 'cli' ) {
+					$this->setFormat('Cli');
+				} else {
+					$this->setFormat(PHPSECINFO_FORMAT_DEFAULT);
+				}
+			}
+			
+		} else { /* Use defaults */
+			$this->setViewDirectory(dirname(__FILE__).DIRECTORY_SEPARATOR . PHPSECINFO_VIEW_DIR_DEFAULT);
+			if (strtolower(php_sapi_name()) == 'cli' ) {
+				$this->setFormat('Cli');
+			} else {
+				$this->setFormat(PHPSECINFO_FORMAT_DEFAULT);
+			}
 		}
 	}
 
