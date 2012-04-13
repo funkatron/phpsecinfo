@@ -463,15 +463,14 @@ class PhpSecInfo_Test
 	 */
 	function sys_get_temp_dir() {
 		// Try to get from environment variable
-		if ( !empty($_ENV['TMP']) ) {
-			return realpath( $_ENV['TMP'] );
-		} else if ( !empty($_ENV['TMPDIR']) ) {
-			return realpath( $_ENV['TMPDIR'] );
-		} else if ( !empty($_ENV['TEMP']) ) {
-			return realpath( $_ENV['TEMP'] );
-		} else {
-			return NULL;
+		$vars = array('TMP', 'TMPDIR', 'TEMP');
+		foreach($vars as $var) {
+			$tmp = getenv($var);
+			if ( !empty($tmp) ) {
+				return realpath( $tmp );
+			}
 		}
+		return NULL;
 	}
 
 
@@ -530,16 +529,20 @@ class PhpSecInfo_Test
 									'gid'=>$matches[3],
 									'group'=>$matches[4] );
 
+				$groups = array();
 				if ($matches[5]) {
 					$gs = $matches[5];
 					$gs = explode(',', $gs);
 					foreach ($gs as $groupstr) {
-						preg_match("/(\d+)\(([^\)]+)\)/", $groupstr, $subs);
-						$groups[$subs[1]] = $subs[2];
+						if (preg_match("/(\d+)\(([^\)]+)\)/", $groupstr, $subs)) {
+							$groups[$subs[1]] = $subs[2];
+						} else {
+							$groups[$groupstr] = '';
+						}
 					}
 					ksort($groups);
-					$id_data['groups'] = $groups;
 				}
+				$id_data['groups'] = $groups;
 				$success = true;
 			}
 
@@ -553,6 +556,7 @@ class PhpSecInfo_Test
 			$id_data['gid'] = $data['gid'];
 			//$group_data = posix_getgrgid( posix_getegid() );
 			//$id_data['group'] = $group_data['name'];
+			$id_data['groups'] = array();
 			$groups = posix_getgroups();
 			foreach ( $groups as $gid ) {
 				//$group_data = posix_getgrgid(posix_getgid());
